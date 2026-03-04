@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Basics — Basics First</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e;
+  --cream: #faf8f3;
+  --warm: #f5f0e8;
+  --gold: #c9a84c;
+  --gold-light: #e8d5a3;
+  --gold-pale: #fdf6e3;
+  --sage: #5a7a6a;
+  --rust: #c4622d;
+  --muted: #8a8070;
+  --border: #e0d8c8;
+  --blue: #3a7bd5;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); line-height:1.7; }
+.pb { position:fixed; top:0; left:0; height:3px; background:var(--gold); width:0%; transition:width 0.3s; z-index:1000; }
+nav { position:fixed; top:0; left:0; right:0; background:rgba(250,248,243,0.96); backdrop-filter:blur(8px); padding:14px 40px; display:flex; justify-content:space-between; align-items:center; z-index:999; border-bottom:1px solid rgba(201,168,76,0.2); }
+.nav-logo { font-family:'Playfair Display',serif; font-size:18px; color:var(--gold); }
+.nav-prog { font-size:13px; color:var(--muted); font-weight:500; }
+.ctabs { background:var(--warm); border-top:1px solid var(--gold-light); border-bottom:1px solid var(--gold-light); padding:14px 40px; display:flex; gap:6px; overflow-x:auto; position:sticky; top:52px; z-index:98; scrollbar-width:none; }
+.ctabs::-webkit-scrollbar { display:none; }
+.ctab { flex-shrink:0; padding:7px 14px; font-size:12px; font-weight:500; color:var(--muted); cursor:pointer; border-radius:3px; transition:all 0.2s; border:1px solid transparent; background:none; font-family:'DM Sans',sans-serif; }
+.ctab:hover { color:var(--ink); border-color:var(--gold-light); }
+.ctab.active { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+.content { max-width:720px; margin:0 auto; padding:72px 40px 100px; }
+.module { display:none; animation:fadeUp 0.4s ease; }
+.module.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.mod-num { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+.mod-title { font-family:'Playfair Display',serif; font-size:clamp(26px,4vw,40px); line-height:1.15; margin-bottom:10px; }
+.mod-sub { font-size:15px; color:var(--muted); font-style:italic; margin-bottom:40px; }
+.body p { font-size:16px; line-height:1.85; color:#3a3830; margin-bottom:20px; }
+.body h3 { font-family:'Playfair Display',serif; font-size:21px; margin:44px 0 14px; }
+.hl { color:var(--gold); font-weight:600; }
+.bd { font-weight:600; color:var(--ink); }
+.meme-panel { margin:36px 0; border-radius:10px; overflow:hidden; border:2px solid var(--ink); background:white; box-shadow:4px 4px 0px var(--ink); }
+.meme-topbar { background:var(--ink); padding:9px 16px; display:flex; align-items:center; gap:7px; }
+.meme-dot { width:9px; height:9px; border-radius:50%; }
+.meme-title-bar { font-family:'Caveat',cursive; font-size:14px; color:rgba(250,248,243,0.5); margin-left:6px; }
+.scene-2col { display:grid; grid-template-columns:1fr 1fr; background:white; }
+.scene-col { padding:24px 20px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; }
+.scene-col:first-child { border-right:2px solid #eee; background:#fafafa; }
+.scene-col:last-child { background:#f5f9f5; }
+.scene-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+.scene-caption { font-family:'Caveat',cursive; font-size:17px; font-weight:700; line-height:1.3; color:var(--ink); }
+.bubble { background:white; border:2px solid var(--ink); border-radius:14px; padding:10px 14px; font-family:'Caveat',cursive; font-size:16px; font-weight:700; line-height:1.3; text-align:center; position:relative; max-width:220px; }
+.bubble::after { content:''; position:absolute; bottom:-12px; left:50%; transform:translateX(-50%); border:6px solid transparent; border-top-color:var(--ink); }
+.bubble::before { content:''; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:white; z-index:1; }
+.thought { background:#f0f0ff; border:2px dashed #aaa; border-radius:14px; padding:10px 14px; font-family:'Caveat',cursive; font-size:15px; font-weight:600; line-height:1.3; text-align:center; color:#555; font-style:italic; max-width:220px; }
+.scene-single { padding:28px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; background:white; text-align:center; }
+.timeline-meme { background:white; padding:24px; }
+.timeline-row { display:flex; align-items:center; gap:16px; padding:10px 0; border-bottom:1px dashed #eee; }
+.timeline-row:last-child { border-bottom:none; }
+.timeline-time { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); width:70px; flex-shrink:0; }
+.timeline-text { font-family:'Caveat',cursive; font-size:17px; font-weight:700; color:var(--ink); flex:1; }
+.timeline-icon { font-size:24px; flex-shrink:0; }
+.compare-meme { background:white; }
+.compare-row { display:flex; align-items:stretch; border-bottom:2px solid #eee; }
+.compare-row:last-child { border-bottom:none; }
+.compare-icon { width:70px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0; padding:16px; border-right:2px solid #eee; }
+.compare-text { flex:1; padding:16px 18px; font-size:14px; font-weight:600; color:var(--ink); display:flex; align-items:center; line-height:1.4; }
+.compare-row.no .compare-icon { background:#fff0f0; }
+.compare-row.yes .compare-icon { background:#f0fff4; }
+.compare-row.no .compare-text { color:var(--rust); }
+.compare-row.yes .compare-text { color:var(--sage); }
+.meme-caption { padding:10px 18px; background:var(--gold-pale); border-top:2px solid var(--ink); font-family:'Caveat',cursive; font-size:15px; font-weight:600; color:var(--ink); text-align:center; }
+.rate-box { background:var(--ink); color:var(--cream); border-radius:8px; padding:28px 32px; margin-bottom:40px; }
+.rate-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:600; }
+.rate-title { font-family:'Playfair Display',serif; font-size:19px; margin-bottom:18px; color:var(--cream); }
+.rate-opts { display:flex; flex-direction:column; gap:8px; }
+.rate-opt { padding:12px 16px; border:1.5px solid rgba(201,168,76,0.3); border-radius:6px; cursor:pointer; font-size:14px; color:rgba(250,248,243,0.8); transition:all 0.18s; font-family:'DM Sans',sans-serif; background:none; text-align:left; }
+.rate-opt:hover { border-color:var(--gold); color:var(--cream); background:rgba(201,168,76,0.08); }
+.rate-opt.picked { border-color:var(--gold); background:rgba(201,168,76,0.12); color:var(--cream); }
+.rate-resp { display:none; margin-top:16px; padding:14px 16px; background:rgba(201,168,76,0.1); border-radius:6px; font-size:14px; color:var(--gold-light); line-height:1.6; }
+.rate-resp.show { display:block; animation:fadeUp 0.3s ease; }
+.fiveyo { background:var(--gold-pale); border:2px dashed var(--gold); border-radius:8px; padding:24px 28px; margin:36px 0; position:relative; }
+.fiveyo-tag { position:absolute; top:-12px; left:20px; background:var(--gold); color:var(--ink); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:4px 12px; border-radius:20px; }
+.fiveyo p { font-family:'Caveat',cursive !important; font-size:20px !important; line-height:1.6 !important; color:var(--ink) !important; margin:0 !important; }
+.myth-cards { display:flex; flex-direction:column; gap:12px; margin:32px 0; }
+.myth-card { border-radius:8px; overflow:hidden; border:1.5px solid var(--border); }
+.myth-row { display:grid; grid-template-columns:1fr 1fr; }
+.myth-side { padding:16px 18px; background:#fff5f5; border-right:1.5px solid var(--border); }
+.reality-side { padding:16px 18px; background:#f5fff8; }
+.side-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+.myth-side .side-label { color:var(--rust); }
+.reality-side .side-label { color:var(--sage); }
+.side-text { font-size:13px; font-weight:500; line-height:1.5; }
+.callout { border-left:3px solid var(--gold); background:var(--warm); padding:18px 22px; margin:28px 0; border-radius:0 4px 4px 0; }
+.callout-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+.callout p { font-size:15px; color:var(--ink); margin:0; line-height:1.7; }
+.metaphor { background:var(--ink); color:var(--cream); padding:28px 32px; margin:36px 0; border-radius:6px; position:relative; overflow:hidden; }
+.metaphor::before { content:'"'; font-family:'Playfair Display',serif; font-size:100px; color:var(--gold); opacity:0.12; position:absolute; top:-16px; left:14px; line-height:1; }
+.meta-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+.metaphor p { font-size:16px; line-height:1.8; color:rgba(250,248,243,0.88) !important; position:relative; z-index:1; margin:0 !important; }
+.visual-card { background:white; border:1px solid var(--gold-light); padding:28px; margin:32px 0; border-radius:6px; }
+.visual-title { font-family:'Playfair Display',serif; font-size:17px; margin-bottom:20px; text-align:center; }
+.flow-steps { display:flex; flex-direction:column; }
+.flow-step { display:flex; gap:18px; align-items:flex-start; padding:14px 0; border-bottom:1px solid var(--gold-light); }
+.flow-step:last-child { border-bottom:none; }
+.step-num { width:34px; height:34px; background:var(--gold); color:var(--ink); font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0; }
+.step-content strong { display:block; font-size:14px; font-weight:600; margin-bottom:3px; }
+.step-content span { font-size:13px; color:var(--muted); }
+.pct-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:28px 0; }
+.pct-card { background:var(--warm); padding:20px 14px; text-align:center; border-radius:6px; border:1px solid var(--gold-light); }
+.pct-big { font-family:'Playfair Display',serif; font-size:34px; color:var(--gold); display:block; margin-bottom:6px; }
+.pct-label { font-size:11px; color:var(--muted); line-height:1.4; }
+.mistake-list { display:flex; flex-direction:column; gap:12px; margin:28px 0; }
+.mistake-item { display:flex; gap:14px; background:white; border:1px solid #eee; padding:18px; border-radius:6px; }
+.mistake-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
+.mistake-text strong { display:block; font-size:14px; font-weight:600; color:var(--rust); margin-bottom:3px; }
+.mistake-text span { font-size:13px; color:var(--muted); line-height:1.5; }
+.action-box { background:var(--sage); color:white; padding:28px; margin:36px 0; border-radius:6px; }
+.action-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:10px; }
+.action-box h4 { font-family:'Playfair Display',serif; font-size:19px; margin-bottom:14px; }
+.action-steps { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.action-steps li { display:flex; gap:10px; font-size:14px; line-height:1.5; color:rgba(255,255,255,0.9); }
+.action-steps li::before { content:'→'; color:var(--gold-light); flex-shrink:0; font-weight:600; }
+.achievement { background:linear-gradient(135deg,#1a1a2e 0%,#2a2a4e 100%); border:2px solid var(--gold); border-radius:10px; padding:24px 28px; margin:44px 0; display:flex; align-items:center; gap:20px; position:relative; overflow:hidden; }
+.achievement::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 80% 50%,rgba(201,168,76,0.08) 0%,transparent 70%); }
+.ach-badge { width:56px; height:56px; flex-shrink:0; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 0 20px rgba(201,168,76,0.4); }
+.ach-content { position:relative; z-index:1; }
+.ach-tag { font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+.ach-title { font-family:'Playfair Display',serif; font-size:17px; color:white; margin-bottom:3px; }
+.ach-desc { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.4; }
+.quiz-wrap { background:white; border:1px solid var(--gold-light); border-radius:6px; overflow:hidden; margin:36px 0; }
+.quiz-head { background:var(--ink); padding:22px 28px; }
+.quiz-head h3 { font-family:'Playfair Display',serif; font-size:20px; color:var(--cream); margin-bottom:3px; }
+.quiz-head p { font-size:13px; color:rgba(250,248,243,0.5); }
+.quiz-body { padding:28px; }
+.qblock { display:none; }
+.qblock.active { display:block; animation:fadeUp 0.3s ease; }
+.qnum { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; font-weight:600; }
+.qtext { font-size:16px; font-weight:500; margin-bottom:18px; line-height:1.5; }
+.opts { display:flex; flex-direction:column; gap:8px; }
+.opt { padding:13px 16px; border:1.5px solid #e8e0d0; border-radius:4px; cursor:pointer; font-size:14px; color:var(--ink); transition:all 0.15s; font-family:'DM Sans',sans-serif; background:var(--cream); text-align:left; }
+.opt:hover { border-color:var(--gold); background:var(--warm); }
+.opt.correct { border-color:var(--sage); background:rgba(90,122,106,0.08); color:var(--sage); font-weight:500; }
+.opt.wrong { border-color:var(--rust); background:rgba(196,98,45,0.06); color:var(--rust); }
+.qfb { display:none; margin-top:14px; padding:12px 16px; border-radius:4px; font-size:14px; line-height:1.6; }
+.qfb.show { display:block; }
+.qfb.ok { background:rgba(90,122,106,0.1); color:var(--sage); border:1px solid rgba(90,122,106,0.2); }
+.qfb.no { background:rgba(196,98,45,0.08); color:var(--rust); border:1px solid rgba(196,98,45,0.15); }
+.qnext { display:none; margin-top:16px; background:var(--ink); color:var(--cream); border:none; padding:11px 22px; font-size:13px; font-family:'DM Sans',sans-serif; cursor:pointer; border-radius:3px; transition:background 0.2s; }
+.qnext:hover { background:var(--gold); color:var(--ink); }
+.qnext.show { display:inline-block; }
+.score-screen { display:none; text-align:center; padding:36px 28px; }
+.score-screen.show { display:block; animation:fadeUp 0.4s ease; }
+.score-big { font-family:'Playfair Display',serif; font-size:64px; color:var(--gold); line-height:1; margin-bottom:6px; }
+.score-msg { font-size:15px; color:var(--muted); max-width:380px; margin:12px auto 0; line-height:1.7; }
+.nav-btns { display:flex; justify-content:space-between; align-items:center; margin-top:60px; padding-top:28px; border-top:1px solid var(--gold-light); }
+.nbtn { display:flex; align-items:center; gap:8px; background:none; border:1.5px solid var(--ink); padding:11px 22px; font-size:14px; font-weight:500; color:var(--ink); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; border-radius:3px; }
+.nbtn:hover { background:var(--ink); color:var(--cream); }
+.nbtn.primary { background:var(--ink); color:var(--cream); }
+.nbtn.primary:hover { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+.nbtn:disabled { opacity:0.3; cursor:not-allowed; }
+.nbtn:disabled:hover { background:none; color:var(--ink); }
+.hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:120px 40px 80px; max-width:800px; margin:0 auto; }
+.hero-tag { display:inline-block; background:var(--gold-light); color:var(--rust); font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:5px 12px; border-radius:2px; margin-bottom:28px; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(34px,5.5vw,60px); line-height:1.12; margin-bottom:20px; }
+.hero h1 em { font-style:italic; color:var(--gold); }
+.hero-sub { font-size:17px; color:var(--muted); max-width:520px; margin-bottom:40px; line-height:1.8; }
+.hero-meta { display:flex; gap:28px; flex-wrap:wrap; margin-bottom:40px; }
+.meta-item { display:flex; flex-direction:column; gap:3px; }
+.meta-lbl { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); }
+.meta-val { font-size:14px; font-weight:500; }
+.start-btn { display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--cream); padding:15px 30px; font-size:15px; font-weight:500; border:none; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; border-radius:2px; }
+.start-btn:hover { background:var(--gold); color:var(--ink); transform:translateY(-1px); }
+.completion { text-align:center; padding:60px 20px; max-width:560px; margin:0 auto; }
+.comp-badge { width:90px; height:90px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 28px; font-size:36px; box-shadow:0 0 40px rgba(201,168,76,0.3); }
+@media(max-width:600px) {
+  nav,.content,.hero { padding-left:20px; padding-right:20px; }
+  .ctabs { padding:12px 20px; }
+  .scene-2col,.myth-row { grid-template-columns:1fr; }
+  .myth-side { border-right:none; border-bottom:1.5px solid var(--border); }
+  .scene-col:first-child { border-right:none; border-bottom:2px solid #eee; }
+  .pct-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div class="pb" id="pb"></div>
+<nav>
+  <div class="nav-logo">Basics First</div>
+  <div class="nav-prog" id="np">Module 1 of 7</div>
+</nav>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="arjun-smug" viewBox="0 0 120 160">
+      <rect x="30" y="85" width="60" height="55" rx="8" fill="#2a5298"/>
+      <polygon points="50,85 60,100 70,85" fill="white" opacity="0.9"/>
+      <rect x="50" y="75" width="20" height="14" rx="4" fill="#f4a261"/>
+      <ellipse cx="60" cy="58" rx="28" ry="30" fill="#f4a261"/>
+      <ellipse cx="60" cy="32" rx="26" ry="12" fill="#1a1a2e"/>
+      <rect x="34" y="32" width="52" height="12" rx="0" fill="#1a1a2e"/>
+      <ellipse cx="48" cy="55" rx="7" ry="5" fill="white"/>
+      <ellipse cx="72" cy="55" rx="7" ry="5" fill="white"/>
+      <ellipse cx="49" cy="56" rx="4" ry="3.5" fill="#1a1a2e"/>
+      <ellipse cx="73" cy="56" rx="4" ry="3.5" fill="#1a1a2e"/>
+      <circle cx="51" cy="54" r="1.2" fill="white"/>
+      <circle cx="75" cy="54" r="1.2" fill="white"/>
+      <path d="M41 46 Q48 42 55 46" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M65 46 Q72 42 79 46" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M50 70 Q60 78 70 70" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <rect x="8" y="88" width="22" height="10" rx="5" fill="#2a5298" transform="rotate(-15,19,93)"/>
+      <rect x="90" y="88" width="22" height="10" rx="5" fill="#2a5298" transform="rotate(15,101,93)"/>
+    </symbol>
+    <symbol id="arjun-shock" viewBox="0 0 120 160">
+      <rect x="30" y="85" width="60" height="55" rx="8" fill="#2a5298"/>
+      <polygon points="50,85 60,100 70,85" fill="white" opacity="0.9"/>
+      <rect x="50" y="75" width="20" height="14" rx="4" fill="#f4a261"/>
+      <ellipse cx="60" cy="58" rx="28" ry="30" fill="#f4a261"/>
+      <ellipse cx="60" cy="32" rx="26" ry="12" fill="#1a1a2e"/>
+      <rect x="34" y="32" width="52" height="12" fill="#1a1a2e"/>
+      <ellipse cx="48" cy="55" rx="9" ry="9" fill="white"/>
+      <ellipse cx="72" cy="55" rx="9" ry="9" fill="white"/>
+      <ellipse cx="48" cy="56" rx="5.5" ry="5.5" fill="#1a1a2e"/>
+      <ellipse cx="72" cy="56" rx="5.5" ry="5.5" fill="#1a1a2e"/>
+      <circle cx="50" cy="53" r="1.5" fill="white"/>
+      <circle cx="74" cy="53" r="1.5" fill="white"/>
+      <path d="M39 43 Q48 37 56 42" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M64 42 Q72 37 81 43" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="60" cy="73" rx="7" ry="6" fill="#1a1a2e"/>
+      <ellipse cx="60" cy="73" rx="5" ry="4" fill="#8b3a3a"/>
+      <path d="M88 38 Q91 34 89 42 Q87 46 85 42 Q83 36 88 38Z" fill="#74b9ff"/>
+    </symbol>
+    <symbol id="arjun-awkward" viewBox="0 0 120 160">
+      <rect x="30" y="85" width="60" height="55" rx="8" fill="#2a5298"/>
+      <polygon points="50,85 60,100 70,85" fill="white" opacity="0.9"/>
+      <rect x="50" y="75" width="20" height="14" rx="4" fill="#f4a261"/>
+      <ellipse cx="60" cy="58" rx="28" ry="30" fill="#f4a261"/>
+      <ellipse cx="60" cy="32" rx="26" ry="12" fill="#1a1a2e"/>
+      <rect x="34" y="32" width="52" height="12" fill="#1a1a2e"/>
+      <ellipse cx="48" cy="55" rx="7" ry="6" fill="white"/>
+      <ellipse cx="72" cy="55" rx="7" ry="6" fill="white"/>
+      <ellipse cx="51" cy="56" rx="4" ry="4" fill="#1a1a2e"/>
+      <ellipse cx="75" cy="56" rx="4" ry="4" fill="#1a1a2e"/>
+      <circle cx="52" cy="54" r="1.2" fill="white"/>
+      <circle cx="76" cy="54" r="1.2" fill="white"/>
+      <path d="M41 47 Q48 45 55 47" stroke="#1a1a2e" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M65 47 Q72 45 79 47" stroke="#1a1a2e" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M48 70 Q55 75 65 68" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="40" cy="64" rx="8" ry="5" fill="#ffb3b3" opacity="0.5"/>
+      <ellipse cx="80" cy="64" rx="8" ry="5" fill="#ffb3b3" opacity="0.5"/>
+      <path d="M84 44 Q87 40 85 48 Q83 52 81 48 Q79 42 84 44Z" fill="#74b9ff"/>
+    </symbol>
+    <symbol id="arjun-proud" viewBox="0 0 120 160">
+      <rect x="30" y="85" width="60" height="55" rx="8" fill="#27ae60"/>
+      <polygon points="50,85 60,100 70,85" fill="white" opacity="0.9"/>
+      <rect x="50" y="75" width="20" height="14" rx="4" fill="#f4a261"/>
+      <ellipse cx="60" cy="58" rx="28" ry="30" fill="#f4a261"/>
+      <ellipse cx="60" cy="32" rx="26" ry="12" fill="#1a1a2e"/>
+      <rect x="34" y="32" width="52" height="12" fill="#1a1a2e"/>
+      <path d="M41 53 Q48 48 55 53" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M65 53 Q72 48 79 53" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M41 44 Q48 40 55 44" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M65 44 Q72 40 79 44" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M46 68 Q60 82 74 68" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M46 68 Q60 82 74 68 Q68 72 52 72Z" fill="white" opacity="0.8"/>
+      <rect x="82" y="60" width="14" height="26" rx="7" fill="#27ae60"/>
+      <rect x="83" y="50" width="12" height="16" rx="6" fill="#f4a261"/>
+      <text x="18" y="38" font-size="14">⭐</text>
+      <text x="88" y="36" font-size="12">✨</text>
+    </symbol>
+    <symbol id="arjun-dead" viewBox="0 0 120 160">
+      <rect x="30" y="92" width="60" height="55" rx="8" fill="#636e72"/>
+      <polygon points="50,92 60,107 70,92" fill="white" opacity="0.6"/>
+      <rect x="50" y="82" width="20" height="14" rx="4" fill="#f4a261"/>
+      <ellipse cx="60" cy="63" rx="28" ry="30" fill="#f4a261"/>
+      <ellipse cx="60" cy="37" rx="26" ry="12" fill="#1a1a2e"/>
+      <rect x="34" y="37" width="52" height="12" fill="#1a1a2e"/>
+      <ellipse cx="48" cy="60" rx="7" ry="4" fill="white"/>
+      <ellipse cx="72" cy="60" rx="7" ry="4" fill="white"/>
+      <rect x="41" y="56" width="14" height="5" rx="2" fill="#f4a261" opacity="0.9"/>
+      <rect x="65" y="56" width="14" height="5" rx="2" fill="#f4a261" opacity="0.9"/>
+      <ellipse cx="48" cy="61" rx="3.5" ry="2.5" fill="#555"/>
+      <ellipse cx="72" cy="61" rx="3.5" ry="2.5" fill="#555"/>
+      <path d="M41 52 Q48 55 55 52" stroke="#1a1a2e" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M65 52 Q72 55 79 52" stroke="#1a1a2e" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <line x1="50" y1="76" x2="70" y2="76" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M38 65 Q40 62 39 70 Q37 74 35 70 Q33 64 38 65Z" fill="#74b9ff" opacity="0.8"/>
+      <path d="M84 68 Q86 65 85 73 Q83 77 81 73 Q79 67 84 68Z" fill="#74b9ff" opacity="0.8"/>
+      <rect x="86" y="97" width="12" height="20" rx="2" fill="#2d3436"/>
+      <rect x="87" y="99" width="10" height="16" rx="1" fill="#636e72"/>
+    </symbol>
+    <symbol id="arjun-think" viewBox="0 0 120 160">
+      <rect x="30" y="85" width="60" height="55" rx="8" fill="#6c5ce7"/>
+      <polygon points="50,85 60,100 70,85" fill="white" opacity="0.9"/>
+      <rect x="50" y="75" width="20" height="14" rx="4" fill="#f4a261"/>
+      <ellipse cx="60" cy="58" rx="28" ry="30" fill="#f4a261"/>
+      <ellipse cx="60" cy="32" rx="26" ry="12" fill="#1a1a2e"/>
+      <rect x="34" y="32" width="52" height="12" fill="#1a1a2e"/>
+      <path d="M41 44 Q48 49 55 44" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M65 47 Q72 42 79 46" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="48" cy="55" rx="7" ry="6" fill="white"/>
+      <ellipse cx="72" cy="55" rx="7" ry="6" fill="white"/>
+      <ellipse cx="48" cy="56" rx="4" ry="4" fill="#1a1a2e"/>
+      <ellipse cx="72" cy="56" rx="4" ry="4" fill="#1a1a2e"/>
+      <circle cx="50" cy="54" r="1.2" fill="white"/>
+      <circle cx="74" cy="54" r="1.2" fill="white"/>
+      <path d="M48 70 Q53 66 58 70 Q63 74 68 70" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <rect x="8" y="92" width="26" height="10" rx="5" fill="#6c5ce7" transform="rotate(-30,21,97)"/>
+      <ellipse cx="22" cy="82" rx="9" ry="8" fill="#f4a261"/>
+      <text x="84" y="42" font-size="16" fill="#6c5ce7" font-weight="bold">?</text>
+      <text x="92" y="58" font-size="11" fill="#6c5ce7" font-weight="bold">?</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="heroSection">
+  <div class="hero">
+    <span class="hero-tag">Personal Finance · Micro Course</span>
+    <h1>Money Basics —<br><em>The Course Nobody</em><br>Taught You</h1>
+    <p class="hero-sub">Real knowledge. Explained properly. With Arjun — who's been where you are and figured it out, one embarrassing mistake at a time.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-lbl">Duration</span><span class="meta-val">45–55 mins</span></div>
+      <div class="meta-item"><span class="meta-lbl">Format</span><span class="meta-val">Text + Visuals + Arjun</span></div>
+      <div class="meta-item"><span class="meta-lbl">Modules</span><span class="meta-val">6 + Quiz</span></div>
+      <div class="meta-item"><span class="meta-lbl">Vibe</span><span class="meta-val">Honest. A bit funny. Useful.</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:20px;background:white;border:2px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:36px;max-width:480px;">
+      <svg width="70" height="95" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Meet Your Guide</div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px;">Arjun, 29</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.5;">Software engineer. Earned well for 5 years. Had absolutely no idea what to do with it. Then he learned the basics. Now he's explaining them to you.</div>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startCourse()">Begin Course <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
+
+<div id="courseSection" style="display:none;">
+  <div class="ctabs" id="ctabs">
+    <button class="ctab active" onclick="gm(0)">1. The Lie</button>
+    <button class="ctab" onclick="gm(1)">2. Money Moves</button>
+    <button class="ctab" onclick="gm(2)">3. Three Buckets</button>
+    <button class="ctab" onclick="gm(3)">4. Compounding</button>
+    <button class="ctab" onclick="gm(4)">5. Mistakes</button>
+    <button class="ctab" onclick="gm(5)">6. First Move</button>
+    <button class="ctab" onclick="gm(6)">Quiz</button>
+  </div>
+  <div class="content">
+
+    <!-- MODULE 1 -->
+    <div class="module active" id="m0">
+      <div class="mod-num">Module 01</div>
+      <h2 class="mod-title">The Lie You Were Told About Money</h2>
+      <p class="mod-sub">Why feeling confused is not your fault — and never was</p>
+      <div class="rate-box">
+        <div class="rate-label">⚡ Before We Start</div>
+        <div class="rate-title">Which of these did you believe before today?</div>
+        <div class="rate-opts">
+          <button class="rate-opt" onclick="rateClick(this,0)">"I'll start investing when I earn more"</button>
+          <button class="rate-opt" onclick="rateClick(this,1)">"My savings account is basically investing"</button>
+          <button class="rate-opt" onclick="rateClick(this,2)">"Finance is too complicated — it's not for me"</button>
+          <button class="rate-opt" onclick="rateClick(this,3)">"All of these, honestly 😅"</button>
+        </div>
+        <div class="rate-resp" id="rr0"></div>
+      </div>
+      <div class="body">
+        <p>Let's start with what nobody says out loud: <span class="bd">most working adults have no real idea how money works.</span> Not because they're not smart. Because nobody ever taught them.</p>
+        <p>School spent years teaching you trigonometry. Zero hours on why your savings account is quietly losing value. This course is that missing conversation.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">arjun_in_school.jpg</span></div>
+          <div class="scene-2col">
+            <div class="scene-col"><div class="scene-label">What school taught</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-dead"/></svg><div class="bubble">sin²θ + cos²θ = 1<br>...okay</div><div class="scene-caption">12 years of this</div></div>
+            <div class="scene-col"><div class="scene-label">What school skipped</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-shock"/></svg><div class="bubble">Wait — how does<br>a salary even work?</div><div class="scene-caption">Never once covered</div></div>
+          </div>
+          <div class="meme-caption">The entire school curriculum said "not my problem" to personal finance. And here we are. 📚</div>
+        </div>
+        <h3>Why this matters right now</h3>
+        <p>You're probably 5–10 years into your career. Earning. Maybe saving a little. But there's a nagging feeling you should be doing more — that somehow everyone else figured out something you didn't.</p>
+        <p>Here's the truth: they didn't. The difference between people who build real wealth and those who don't is one thing: <span class="hl">they learned the basics.</span> That's what this course is.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">the_moment_it_hits.jpg</span></div>
+          <div class="timeline-meme">
+            <div class="timeline-row"><div class="timeline-time">Age 22</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg><div class="timeline-text">"I'll figure out money stuff later, I just started working"</div><div class="timeline-icon">😎</div></div>
+            <div class="timeline-row"><div class="timeline-time">Age 25</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg><div class="timeline-text">"Still early, no rush, enjoying life first"</div><div class="timeline-icon">🤷</div></div>
+            <div class="timeline-row"><div class="timeline-time">Age 28</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-awkward"/></svg><div class="timeline-text">"Wait... I've been earning for 6 years. Where is it all?"</div><div class="timeline-icon">😅</div></div>
+            <div class="timeline-row"><div class="timeline-time">Age 29</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-shock"/></svg><div class="timeline-text">"I should have started at 22. The compounding years are GONE."</div><div class="timeline-icon">😱</div></div>
+          </div>
+          <div class="meme-caption">Arjun at every age. You are Arjun. I am Arjun. We are all Arjun. 🫂</div>
+        </div>
+        <div class="metaphor"><div class="meta-label">Think of it this way</div><p>Learning to drive by only sitting in the passenger seat — watching others, picking up bits. You could get by. But you'd never feel in control, and every new road would feel uncertain. The basics of money are like the basics of driving. Once you know them, everything else opens up.</p></div>
+        <div class="achievement"><div class="ach-badge">🔓</div><div class="ach-content"><div class="ach-tag">Achievement Unlocked</div><div class="ach-title">The Honest One</div><div class="ach-desc">You admitted the gap. That's already further than most people get.</div></div></div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" disabled>← Previous</button><button class="nbtn primary" onclick="gm(1)">Next Module →</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="module" id="m1">
+      <div class="mod-num">Module 02</div>
+      <h2 class="mod-title">How Money Actually Moves</h2>
+      <p class="mod-sub">The flow nobody drew for you — until now</p>
+      <div class="body">
+        <p>Before you can manage money, you need to <em>see</em> it. Most people experience money as a blur — comes in, goes out, never enough. That blur is the problem.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">every_month_without_fail.jpg</span></div>
+          <div class="timeline-meme">
+            <div class="timeline-row"><div class="timeline-time">Day 1</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg><div class="timeline-text">"Salary landed. ₹80,000. I am RICH. This month will be different."</div><div class="timeline-icon">🎉</div></div>
+            <div class="timeline-row"><div class="timeline-time">Day 3</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg><div class="timeline-text">Rent. EMI. Groceries. "Still fine. Still in control."</div><div class="timeline-icon">📊</div></div>
+            <div class="timeline-row"><div class="timeline-time">Day 15</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-awkward"/></svg><div class="timeline-text">Swiggy × 14. Two weekend trips. That jacket. "I deserve it."</div><div class="timeline-icon">😬</div></div>
+            <div class="timeline-row"><div class="timeline-time">Day 28</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-dead"/></svg><div class="timeline-text">"Money is a social construct. Salary in 3 days. I am fine."</div><div class="timeline-icon">💀</div></div>
+          </div>
+          <div class="meme-caption">This is what zero financial system looks like. No shame — Arjun lived this for 4 years. 📅</div>
+        </div>
+        <p>Every rupee you earn goes on one of three journeys. The journey it takes determines everything.</p>
+        <div class="visual-card">
+          <div class="visual-title">The 3 Journeys of Every Rupee</div>
+          <div class="flow-steps">
+            <div class="flow-step"><div class="step-num">1</div><div class="step-content"><strong>Consumed → Expenses</strong><span>Rent, food, EMIs. Necessary — but needs a ceiling.</span></div></div>
+            <div class="flow-step"><div class="step-num">2</div><div class="step-content"><strong>Sitting Idle → Uninvested Savings</strong><span>Bank account. Feels safe. Actually losing value every year due to inflation.</span></div></div>
+            <div class="flow-step"><div class="step-num">3</div><div class="step-content"><strong>Working For You → Investments</strong><span>Mutual funds, stocks, assets. The only money that genuinely grows.</span></div></div>
+          </div>
+        </div>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">always_has_been.jpg</span></div>
+          <div class="scene-2col">
+            <div class="scene-col"><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg><div class="bubble">I have ₹2 lakh in savings. I am a responsible adult. 😌</div></div>
+            <div class="scene-col" style="background:#fff8f0;"><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-shock"/></svg><div class="bubble">Savings account: 3.5%<br>Inflation: 6%<br>Real return: -2.5% 😱</div></div>
+          </div>
+          <div class="meme-caption">Arjun checking his savings account vs Arjun understanding inflation for the first time. Same day. 📉</div>
+        </div>
+        <div class="callout"><div class="callout-label">The one number that matters right now</div><p>What percentage of your monthly salary goes on Journey 3? Most people: under 10%. Target: 20–30%. That gap is your entire financial opportunity.</p></div>
+        <div class="achievement"><div class="ach-badge">🗺️</div><div class="ach-content"><div class="ach-tag">Achievement Unlocked</div><div class="ach-title">Mapped the Territory</div><div class="ach-desc">You can now see where money goes. You can't change what you can't see.</div></div></div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" onclick="gm(0)">← Previous</button><button class="nbtn primary" onclick="gm(2)">Next Module →</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="module" id="m2">
+      <div class="mod-num">Module 03</div>
+      <h2 class="mod-title">The Three Buckets System</h2>
+      <p class="mod-sub">Why budgets fail — and what actually works</p>
+      <div class="body">
+        <p>Budgets fail not because people are undisciplined. They fail because budgets require constant willpower. There's a better way — it works automatically and takes 10 minutes to set up.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">arjun_tries_budgeting.jpg</span></div>
+          <div class="timeline-meme">
+            <div class="timeline-row"><div class="timeline-time">Monday</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg><div class="timeline-text">"Starting a budget spreadsheet. 47 categories. Very detailed. This is it."</div><div class="timeline-icon">📊</div></div>
+            <div class="timeline-row"><div class="timeline-time">Wednesday</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-think"/></svg><div class="timeline-text">"Do samosas count as 'food' or 'entertainment'? This system is broken."</div><div class="timeline-icon">🤔</div></div>
+            <div class="timeline-row"><div class="timeline-time">Friday</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-dead"/></svg><div class="timeline-text">"Haven't opened the spreadsheet in 2 days. I'll restart next month."</div><div class="timeline-icon">💀</div></div>
+          </div>
+          <div class="meme-caption">Arjun's 47-category budget lasted exactly 4 days. There is a better way. 📉</div>
+        </div>
+        <div class="pct-grid">
+          <div class="pct-card"><span class="pct-big">50%</span><span class="pct-label">Needs<br>Rent, food, bills, EMIs</span></div>
+          <div class="pct-card"><span class="pct-big">30%</span><span class="pct-label">Wants<br>Dining, travel, fun</span></div>
+          <div class="pct-card"><span class="pct-big">20%</span><span class="pct-label">Future<br>Savings + Investments</span></div>
+        </div>
+        <div class="fiveyo"><div class="fiveyo-tag">Explain Like I'm 5</div><svg width="50" height="66" viewBox="0 0 120 160" style="margin-bottom:8px;"><use href="#arjun-proud"/></svg><p>You get ₹100. Give ₹20 to Future-You FIRST. Then ₹50 for boring stuff like rent. Then ₹30 to have fun with. Everyone wins. 🎉</p></div>
+        <h3>The one habit that makes this automatic</h3>
+        <p>On salary day — before you pay anyone — move 20% to a separate account. This is "paying yourself first." It's the foundational habit of every person who has successfully built wealth.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">the_salary_pizza.jpg</span></div>
+          <div class="scene-2col">
+            <div class="scene-col" style="background:#fff5f5;"><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-dead"/></svg><div class="scene-label" style="color:var(--rust);">Before learning this</div><div class="bubble">Spent everything. Tried to "save the rest". Rest was ₹0.</div><div class="scene-caption" style="color:var(--rust);">savings rate: 0%</div></div>
+            <div class="scene-col" style="background:#f0fff4;"><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg><div class="scene-label" style="color:var(--sage);">After learning this</div><div class="bubble">₹16,000 moved on Day 1. Lived on the rest. Didn't miss it. 💪</div><div class="scene-caption" style="color:var(--sage);">savings rate: 20%</div></div>
+          </div>
+          <div class="meme-caption">Same salary. Same Arjun. The only thing that changed: the order of operations. 🔄</div>
+        </div>
+        <div class="metaphor"><div class="meta-label">The Pizza Metaphor</div><p>Your salary is a hot pizza. Put it on the table and let everyone eat freely — the best slices vanish and you're left with the edges. But if you box two slices before anyone touches it, those slices are always there. Your future self eats last if you don't protect their portion first.</p></div>
+        <div class="achievement"><div class="ach-badge">🪣</div><div class="ach-content"><div class="ach-tag">Achievement Unlocked</div><div class="ach-title">Bucket Master</div><div class="ach-desc">You have a system. 90% of people never get this far.</div></div></div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" onclick="gm(1)">← Previous</button><button class="nbtn primary" onclick="gm(3)">Next Module →</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="module" id="m3">
+      <div class="mod-num">Module 04</div>
+      <h2 class="mod-title">The Compounding Secret</h2>
+      <p class="mod-sub">The one concept that changes everything — understood too late by most people</p>
+      <div class="body">
+        <p>This module makes people feel two things simultaneously: amazed and slightly sick. Amazed because compounding is genuinely magical. Slightly sick because they wish they'd understood it sooner.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">arjun_vs_compounding.jpg</span></div>
+          <div class="scene-2col">
+            <div class="scene-col" style="background:#f9f9ff;"><div class="scene-label">Arjun, age 25</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg><div class="thought">"I'll start investing when I'm more settled. Maybe 30."</div></div>
+            <div class="scene-col" style="background:#fff5f5;"><div class="scene-label">Compounding, age 25</div><div style="font-size:56px;margin:16px 0;">📈</div><div class="bubble">I'll just... start without you then.</div><div class="scene-caption" style="color:var(--rust);">Growing for someone else's retirement</div></div>
+          </div>
+          <div class="meme-caption">While Arjun waited to "get settled", five years of compounding worked for someone who started at 22. 💸</div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-title">Same ₹5,000/month. Completely Different Outcomes.</div>
+          <div class="flow-steps">
+            <div class="flow-step"><div class="step-num">A</div><div class="step-content"><strong>Priya — starts at 25, stops at 35</strong><span>Total invested: ₹6 lakh → Value at 60: ~₹1.76 crore</span></div></div>
+            <div class="flow-step"><div class="step-num">B</div><div class="step-content"><strong>Rahul — starts at 35, invests until 60</strong><span>Total invested: ₹15 lakh → Value at 60: ~₹94 lakh</span></div></div>
+          </div>
+        </div>
+        <div class="fiveyo"><div class="fiveyo-tag">Explain Like I'm 5</div><svg width="50" height="66" viewBox="0 0 120 160" style="margin-bottom:8px;"><use href="#arjun-think"/></svg><p>Your money had a baby 👶. That baby also had a baby 👶👶. Now you have 3 moneys. Next year all 3 have babies. YOU DID NOTHING. The moneys just kept having babies. That's compounding. It works while you sleep. 😴💰</p></div>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">priya_vs_rahul_age_60.jpg</span></div>
+          <div class="scene-2col">
+            <div class="scene-col" style="background:#f0fff4;"><div class="scene-label" style="color:var(--sage);">Priya at 60</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg><div class="bubble">₹1.76 Crore.<br>Invested ₹6L.<br>Stopped at 35. 😎</div></div>
+            <div class="scene-col" style="background:#fff5f5;"><div class="scene-label" style="color:var(--rust);">Rahul at 60</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-shock"/></svg><div class="bubble">₹94 Lakh.<br>Invested ₹15L.<br>For 25 years. 😭</div></div>
+          </div>
+          <div class="meme-caption">Rahul invested ₹9 lakh MORE, for 15 years LONGER. Priya still has nearly double. Time beats money. Every time. ⏰</div>
+        </div>
+        <div class="metaphor"><div class="meta-label">The Snowball on a Hill</div><p>Compounding is a snowball rolling downhill. Tiny at the top — barely moving. But as it rolls, it picks up more snow with every rotation. By the bottom, it's enormous. The hill is time. You cannot buy back the top of the hill. You can only start now.</p></div>
+        <div class="achievement"><div class="ach-badge">⏰</div><div class="ach-content"><div class="ach-tag">Achievement Unlocked</div><div class="ach-title">Time Traveller</div><div class="ach-desc">You now understand why starting today beats starting big tomorrow.</div></div></div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" onclick="gm(2)">← Previous</button><button class="nbtn primary" onclick="gm(4)">Next Module →</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="module" id="m4">
+      <div class="mod-num">Module 05</div>
+      <h2 class="mod-title">The 5 Mistakes Smart People Make</h2>
+      <p class="mod-sub">These feel right. They are wrong. That's what makes them expensive.</p>
+      <div class="body">
+        <p>These aren't careless mistakes. They're made by thoughtful people following logic that sounds reasonable but isn't. Arjun made all five. Most working professionals make at least three.</p>
+        <div class="myth-cards">
+          <div class="myth-card"><div class="myth-row"><div class="myth-side"><div class="side-label">❌ The Myth</div><div class="side-text">"I need a lot of money to start investing"</div></div><div class="reality-side"><div class="side-label">✅ The Reality</div><div class="side-text">A ₹500 SIP at 22 beats a ₹5,000 SIP at 32. Amount matters less than time.</div></div></div></div>
+          <div class="myth-card"><div class="myth-row"><div class="myth-side"><div class="side-label">❌ The Myth</div><div class="side-text">"Saving and investing are the same thing"</div></div><div class="reality-side"><div class="side-label">✅ The Reality</div><div class="side-text">Saving preserves money. Investing grows it. At 3.5% with 6% inflation, you lose 2.5% every year.</div></div></div></div>
+          <div class="myth-card"><div class="myth-row"><div class="myth-side"><div class="side-label">❌ The Myth</div><div class="side-text">"I'll sort finances when things settle down"</div></div><div class="reality-side"><div class="side-label">✅ The Reality</div><div class="side-text">Things don't settle down. Each delay costs compounding years that can never be recovered.</div></div></div></div>
+        </div>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">arjun_gets_a_tip.jpg</span></div>
+          <div class="compare-meme">
+            <div class="compare-row no"><div class="compare-icon">🙅</div><div class="compare-text">Index fund SIP — boring, consistent, proven, compounding quietly for 20 years</div></div>
+            <div class="compare-row yes"><div class="compare-icon">😍</div><div class="compare-text">"Bhai ek stock hai, guaranteed 10x in 6 months, my college roommate's cousin's CA told me" — Arjun's portfolio, 2021</div></div>
+          </div>
+          <div class="meme-caption">The boring thing wins. It has always won. The exciting thing has a much better story though. 📊</div>
+        </div>
+        <h3>The 5 mistakes in full</h3>
+        <div class="mistake-list">
+          <div class="mistake-item"><div class="mistake-icon">⚡</div><div class="mistake-text"><strong>"I'll invest when I earn more"</strong><span>Small-and-early beats big-and-late almost every time. Compounding cares about time, not amount.</span></div></div>
+          <div class="mistake-item"><div class="mistake-icon">⚡</div><div class="mistake-text"><strong>Treating savings account as investment</strong><span>3.5% interest minus 6% inflation = -2.5% real return every year.</span></div></div>
+          <div class="mistake-item"><div class="mistake-icon">⚡</div><div class="mistake-text"><strong>Lifestyle inflation with every raise</strong><span>Income doubles, expenses double, savings rate stays 0%. When income rises, increase investment % before upgrading lifestyle.</span></div></div>
+          <div class="mistake-item"><div class="mistake-icon">⚡</div><div class="mistake-text"><strong>No emergency fund before investing</strong><span>Without 3–6 months of expenses saved, one medical emergency forces you to break investments at the worst time.</span></div></div>
+          <div class="mistake-item"><div class="mistake-icon">⚡</div><div class="mistake-text"><strong>Waiting to understand everything first</strong><span>A boring index fund SIP started today outperforms a sophisticated strategy started two years from now.</span></div></div>
+        </div>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">arjun_reads_the_list.jpg</span></div>
+          <div class="scene-single"><svg width="100" height="133" viewBox="0 0 120 160"><use href="#arjun-awkward"/></svg><div class="bubble">Wait.<br>I'm doing 3 of these.<br>Maybe 4.<br>Okay definitely 4.</div><div style="font-family:'Caveat',cursive;font-size:17px;color:var(--muted);margin-top:8px;">— Everyone reading this list, including past-Arjun 🫠</div></div>
+          <div class="meme-caption">Good news: recognisable mistakes are fixable mistakes. 🎯</div>
+        </div>
+        <div class="achievement"><div class="ach-badge">🛡️</div><div class="ach-content"><div class="ach-tag">Achievement Unlocked</div><div class="ach-title">Myth Buster</div><div class="ach-desc">You can now see the traps before you fall in. Worth more than any hot stock tip.</div></div></div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" onclick="gm(3)">← Previous</button><button class="nbtn primary" onclick="gm(5)">Next Module →</button></div>
+    </div>
+
+    <!-- MODULE 6 -->
+    <div class="module" id="m5">
+      <div class="mod-num">Module 06</div>
+      <h2 class="mod-title">Your First Move — This Week</h2>
+      <p class="mod-sub">Not someday. This week. Three specific actions.</p>
+      <div class="body">
+        <p>Information without action is just entertainment. The biggest risk now is returning to old patterns because the content never converted into a specific action.</p>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">the_knowing_doing_gap.jpg</span></div>
+          <div class="scene-2col">
+            <div class="scene-col" style="background:#f9f9ff;"><div class="scene-label">Arjun's brain after this course</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg><div class="bubble">I completely understand compounding, budgeting, and investing now. 💪</div></div>
+            <div class="scene-col" style="background:#fff9f0;"><div class="scene-label">Arjun, 3 months later</div><svg width="90" height="120" viewBox="0 0 120 160"><use href="#arjun-dead"/></svg><div class="bubble">...hasn't started a single SIP yet. Compounding has left the chat.</div></div>
+          </div>
+          <div class="meme-caption">Don't be Month-3 Arjun. The course ends here. The work starts now. 🚀</div>
+        </div>
+        <div class="action-box">
+          <div class="action-label">Your 3 Actions This Week</div>
+          <h4>Do these. Nothing more, nothing less.</h4>
+          <ul class="action-steps">
+            <li>Open a second bank account. Label it "Future Bucket." Transfer 10–20% of your last salary into it today.</li>
+            <li>Set up one SIP — even ₹500 — on Groww, Zerodha Coin, or Paytm Money. Choose a broad-market index fund.</li>
+            <li>Calculate your savings rate: (income − expenses) ÷ income × 100. Write it down. Watch it grow.</li>
+          </ul>
+        </div>
+        <div class="meme-panel">
+          <div class="meme-topbar"><div class="meme-dot" style="background:#ff5f57"></div><div class="meme-dot" style="background:#ffbd2e"></div><div class="meme-dot" style="background:#28ca41"></div><span class="meme-title-bar">arjun_one_month_later.jpg</span></div>
+          <div class="timeline-meme">
+            <div class="timeline-row"><div class="timeline-time">Week 1</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-think"/></svg><div class="timeline-text">Set up ₹2,000 SIP. Took 8 minutes. Felt weirdly adult about it.</div><div class="timeline-icon">📱</div></div>
+            <div class="timeline-row"><div class="timeline-time">Month 1</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-smug"/></svg><div class="timeline-text">First investment notification. "Money working while I sleep. This is real."</div><div class="timeline-icon">📈</div></div>
+            <div class="timeline-row"><div class="timeline-time">Month 6</div><svg width="44" height="58" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg><div class="timeline-text">Increased SIP to ₹5,000. Finally feels like someone who has their life together.</div><div class="timeline-icon">🏆</div></div>
+          </div>
+          <div class="meme-caption">That's you. After this week. The only difference: he started. 💪</div>
+        </div>
+        <div class="metaphor"><div class="meta-label">One last thought</div><p>The best time to plant a tree was 20 years ago. The second best time is today. The course is finished. The work starts now.</p></div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" onclick="gm(4)">← Previous</button><button class="nbtn primary" onclick="gm(6)">Take the Quiz →</button></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="module" id="m6">
+      <div class="mod-num">Final Check</div>
+      <h2 class="mod-title">Quick Quiz</h2>
+      <p class="mod-sub">5 questions. Not to test you — to lock the concepts in.</p>
+      <div style="display:flex;align-items:center;gap:16px;background:var(--warm);border:1px solid var(--gold-light);border-radius:8px;padding:18px 22px;margin-bottom:32px;">
+        <svg width="56" height="74" viewBox="0 0 120 160"><use href="#arjun-think"/></svg>
+        <div style="font-family:'Caveat',cursive;font-size:18px;line-height:1.4;color:var(--ink);">"Okay, I'll go first. I got 3/5 the first time I tried this. Let's see if you do better." — Arjun</div>
+      </div>
+      <div class="quiz-wrap">
+        <div class="quiz-head"><h3>Money Basics — Final Quiz</h3><p>Choose the best answer for each question</p></div>
+        <div class="quiz-body">
+          <div class="qblock active" id="qb0">
+            <div class="qnum">Question 1 of 5</div>
+            <div class="qtext">A professional earning ₹80,000/month saves ₹15,000 but invests nothing. Which "journey" is completely missing?</div>
+            <div class="opts">
+              <button class="opt" onclick="ans(0,0)">Journey 1 — Expenses</button>
+              <button class="opt" onclick="ans(0,1)">Journey 2 — Idle savings</button>
+              <button class="opt" onclick="ans(0,2)">Journey 3 — Money working for them</button>
+              <button class="opt" onclick="ans(0,3)">All three equally</button>
+            </div>
+            <div class="qfb" id="fb0"></div>
+            <button class="qnext" id="nx0" onclick="nq(1)">Next →</button>
+          </div>
+          <div class="qblock" id="qb1">
+            <div class="qnum">Question 2 of 5</div>
+            <div class="qtext">In the 50-30-20 rule, what does the 20% represent?</div>
+            <div class="opts">
+              <button class="opt" onclick="ans(1,0)">Lifestyle and wants spending</button>
+              <button class="opt" onclick="ans(1,1)">Fixed monthly bills only</button>
+              <button class="opt" onclick="ans(1,2)">Savings and investments — your future</button>
+              <button class="opt" onclick="ans(1,3)">Emergency spending only</button>
+            </div>
+            <div class="qfb" id="fb1"></div>
+            <button class="qnext" id="nx1" onclick="nq(2)">Next →</button>
+          </div>
+          <div class="qblock" id="qb2">
+            <div class="qnum">Question 3 of 5</div>
+            <div class="qtext">Priya invests ₹5,000/month from age 25–35 then stops. Rahul invests ₹5,000/month from age 35–60. Who has more money at 60?</div>
+            <div class="opts">
+              <button class="opt" onclick="ans(2,0)">Rahul — he invested much longer</button>
+              <button class="opt" onclick="ans(2,1)">Priya — she started earlier, compounding did the rest</button>
+              <button class="opt" onclick="ans(2,2)">They end up with the same amount</button>
+              <button class="opt" onclick="ans(2,3)">Depends on investment type</button>
+            </div>
+            <div class="qfb" id="fb2"></div>
+            <button class="qnext" id="nx2" onclick="nq(3)">Next →</button>
+          </div>
+          <div class="qblock" id="qb3">
+            <div class="qnum">Question 4 of 5</div>
+            <div class="qtext">Your savings account pays 3.5% per year. Inflation is 6%. What is happening to your money?</div>
+            <div class="opts">
+              <button class="opt" onclick="ans(3,0)">It's growing slowly but safely</button>
+              <button class="opt" onclick="ans(3,1)">It's staying the same in real value</button>
+              <button class="opt" onclick="ans(3,2)">It's losing purchasing power every year</button>
+              <button class="opt" onclick="ans(3,3)">Depends on which bank you're with</button>
+            </div>
+            <div class="qfb" id="fb3"></div>
+            <button class="qnext" id="nx3" onclick="nq(4)">Next →</button>
+          </div>
+          <div class="qblock" id="qb4">
+            <div class="qnum">Question 5 of 5</div>
+            <div class="qtext">What should you build BEFORE you start investing?</div>
+            <div class="opts">
+              <button class="opt" onclick="ans(4,0)">Learn everything about stock markets first</button>
+              <button class="opt" onclick="ans(4,1)">Wait until you earn more</button>
+              <button class="opt" onclick="ans(4,2)">A 3–6 month emergency fund in a liquid account</button>
+              <button class="opt" onclick="ans(4,3)">Hire a financial advisor first</button>
+            </div>
+            <div class="qfb" id="fb4"></div>
+            <button class="qnext" id="nx4" onclick="showScore()">See My Results →</button>
+          </div>
+          <div class="score-screen" id="scoreScreen">
+            <div id="scoreArjun" style="margin-bottom:16px;"></div>
+            <div class="score-big" id="scoreBig">0/5</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Questions Correct</div>
+            <div class="score-msg" id="scoreMsg"></div>
+            <br><br>
+            <button class="nbtn primary" onclick="gm(7)" style="margin:0 auto;display:inline-flex;">Complete Course →</button>
+          </div>
+        </div>
+      </div>
+      <div class="nav-btns"><button class="nbtn" onclick="gm(5)">← Previous</button><button class="nbtn primary" onclick="gm(7)">Complete Course →</button></div>
+    </div>
+
+    <!-- COMPLETION -->
+    <div class="module" id="m7">
+      <div class="completion">
+        <div class="comp-badge">🎓</div>
+        <h2 class="mod-title">Course Complete.</h2>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin:28px 0;">
+          <svg width="100" height="133" viewBox="0 0 120 160"><use href="#arjun-proud"/></svg>
+          <div style="font-family:'Caveat',cursive;font-size:20px;color:var(--ink);text-align:center;max-width:360px;line-height:1.5;">"You just learned what took me 4 years of confusion to figure out. Now go start that SIP. Today. Not Monday." — Arjun 👊</div>
+        </div>
+        <div class="achievement" style="text-align:left;">
+          <div class="ach-badge">👑</div>
+          <div class="ach-content"><div class="ach-tag">Final Achievement Unlocked</div><div class="ach-title">Top 10% — For Real</div><div class="ach-desc">You understand money basics that most working professionals never properly learn.</div></div>
+        </div>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:12px;">You've covered in 45 minutes what most people spend years figuring out — or never figure out at all.</p>
+        <p style="color:var(--gold);font-weight:600;font-size:17px;">Now do the three actions from Module 6. That's where the real course begins. 🚀</p>
+        <br>
+        <button class="nbtn primary" onclick="restart()" style="margin:0 auto;display:inline-flex;">Review Course Again</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let cur=0;
+const correct=[2,2,1,2,2];
+const fbs=[
+  ["Expenses are Journey 1 — very much present. Journey 3 is entirely absent.","They ARE saving — but it's parked on Journey 2 going nowhere. Journey 3 is the missing piece.","Correct. Journey 3 — money actively working for you — is completely absent. That's the gap that costs most people their financial future.","Each journey exists at different levels. Journey 3 is the one that's completely missing."],
+  ["That's the 30% bucket — wants and lifestyle.","Bills fall under the 50% Needs bucket.","Correct. The 20% bucket is dedicated to savings and investments — your future self's money. It leaves your account on salary day, before any expenses.","Emergency spending comes from savings — but the 20% rule is specifically about savings and investments."],
+  ["Rahul invested ₹15 lakh over 25 years. Priya invested ₹6 lakh over 10 years and still ended up with nearly double.","Correct. Priya ends up with ~₹1.76 crore. Rahul with ~₹94 lakh. She invested less, stopped earlier, and still won. That is compounding.","They absolutely don't. The gap is nearly ₹80 lakh.","Time is the dominant variable by a massive margin."],
+  ["3.5% growth with 6% inflation means purchasing power is falling, not growing.","3.5% minus 6% inflation = -2.5% real return. The number grows, but what it can buy shrinks.","Correct. In real terms, money in a savings account shrinks at ~2.5% per year when inflation exceeds interest.","The maths is identical at every bank."],
+  ["Waiting until you know everything means never starting. Action creates learning.","Waiting costs irreplaceable compounding years. Priya's example proves this.","Correct. An emergency fund is your safety net. Without it, any shock forces you to break investments at exactly the wrong time.","A good advisor adds value — but the emergency fund is the foundational step that comes first."]
+];
+let answered=[false,false,false,false,false];
+let score=0;
+const arjunReactions=[
+  {svg:'arjun-shock',text:'"Oh. That was harder than I expected. Go back to the modules — it clicks on second read." — Arjun'},
+  {svg:'arjun-awkward',text:'"Not bad! A couple of things didn\'t stick yet. Quick review and you\'ll nail it." — Arjun'},
+  {svg:'arjun-smug',text:'"Solid. The concepts are landing. Now make sure those 3 actions from Module 6 actually happen." — Arjun'},
+  {svg:'arjun-proud',text:'"Now THAT\'S what I\'m talking about. Go start that SIP. Today, not Monday." — Arjun 🏆'},
+  {svg:'arjun-proud',text:'"Perfect score. You didn\'t just read this — you absorbed it." — Arjun ⭐'}
+];
+function startCourse(){document.getElementById('heroSection').style.display='none';document.getElementById('courseSection').style.display='block';updatePB();window.scrollTo(0,0);}
+function gm(n){document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));document.getElementById('m'+n).classList.add('active');document.querySelectorAll('.ctab').forEach((t,i)=>t.classList.toggle('active',i===n));cur=n;updatePB();window.scrollTo(0,document.getElementById('courseSection').offsetTop-60);}
+function updatePB(){document.getElementById('pb').style.width=(((cur+1)/8)*100)+'%';document.getElementById('np').textContent='Module '+(cur+1)+' of 7';}
+function rateClick(btn,idx){document.querySelectorAll('.rate-opt').forEach(o=>o.classList.remove('picked'));btn.classList.add('picked');const msgs=["Classic — and the most expensive financial decision most people make. Module 4 shows you exactly why in numbers. 👀","Nearly everyone believes this. By Module 2 you'll see exactly why this costs you money every year.","This belief is what this course was built to dissolve. Finance isn't complicated. It was never explained properly.","Honestly? Same. That's exactly why this course exists. Let's fix all three, one module at a time. 💪"];const rr=document.getElementById('rr0');rr.textContent=msgs[idx];rr.classList.add('show');}
+function ans(qi,ch){if(answered[qi])return;answered[qi]=true;const qb=document.getElementById('qb'+qi);qb.querySelectorAll('.opt').forEach((o,i)=>{o.disabled=true;if(i===correct[qi])o.classList.add('correct');else if(i===ch&&ch!==correct[qi])o.classList.add('wrong');});const fb=document.getElementById('fb'+qi);const isRight=ch===correct[qi];if(isRight)score++;fb.textContent=fbs[qi][ch];fb.className='qfb show '+(isRight?'ok':'no');document.getElementById('nx'+qi).classList.add('show');}
+function nq(n){document.getElementById('qb'+(n-1)).classList.remove('active');document.getElementById('qb'+n).classList.add('active');}
+function showScore(){document.getElementById('qb4').classList.remove('active');const ss=document.getElementById('scoreScreen');ss.classList.add('show');document.getElementById('scoreBig').textContent=score+'/5';const idx=Math.min(score,4);const r=arjunReactions[idx];document.getElementById('scoreArjun').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:8px;"><svg width="80" height="106" viewBox="0 0 120 160"><use href="#${r.svg}"/></svg><div style="font-family:'Caveat',cursive;font-size:17px;color:var(--ink);max-width:340px;line-height:1.4;">${r.text}</div></div>`;const msgs=["Go back through the modules. Second read always clicks.","A couple of concepts need reinforcing — revisit where you got tripped up.","Solid. Now make sure those 3 actions from Module 6 actually happen.","Excellent. You absorbed this properly. Go start that SIP — today.","Perfect. Top of the class. Arjun is genuinely proud. 🏆"];document.getElementById('scoreMsg').textContent=msgs[idx];}
+function restart(){gm(0);}
+window.addEventListener('scroll',()=>{if(document.getElementById('courseSection').style.display!=='none'){const h=document.documentElement.scrollHeight-window.innerHeight;const pct=Math.max((window.scrollY/h)*100,((cur+1)/8*100));document.getElementById('pb').style.width=pct+'%';}});
+</script>
+</body>
+</html>
